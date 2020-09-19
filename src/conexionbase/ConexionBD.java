@@ -61,6 +61,44 @@ public class ConexionBD {
         }
     }
 
+    public boolean Existe(String consulta) {
+        ResultSetMetaData rsMd;
+        boolean existe = false;
+        try {
+            sentencia = conexion.createStatement();//Se crea el objeto sentencia que es el encargado de enviar la consulta. 
+            resultSet = sentencia.executeQuery(consulta);// se hace la consulta y el resultSet lo guarda. Se debe de usar el Query es solo para consultas "SELECT"
+            rsMd = resultSet.getMetaData();
+            if (rsMd.getColumnCount() != 0) {
+                existe = true;
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error de conexion", "Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println(ex.getMessage());
+        }
+        return existe;
+    }
+    //Este dato busca si un dato existe en una columna determinada
+
+    public boolean Existe(String consulta, String parametro, int columna) {
+        boolean existe = false;
+        String parametroExistente = "";
+        try {
+            sentencia = conexion.createStatement();//Se crea el objeto sentencia que es el encargado de enviar la consulta. 
+            resultSet = sentencia.executeQuery(consulta);// se hace la consulta y el resultSet lo guarda. Se debe de usar el Query es solo para consultas "SELECT"
+
+            if (resultSet.next()) {
+                parametroExistente = resultSet.getString(columna);
+                if (parametroExistente.equals(parametro)) {
+                    existe = true;
+                }
+            }
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, "Error de conexion", "Error", JOptionPane.ERROR_MESSAGE);
+            System.out.println(ex.getMessage());
+        }
+        return existe;
+    }
+
     public void EjecutarInstruccion(String Instruccion) {
         int filas = 0;
         try {
@@ -128,5 +166,5 @@ public class ConexionBD {
     public Statement getSentencia() {
         return sentencia;
     }
-    
+
 }
