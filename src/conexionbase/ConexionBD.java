@@ -18,7 +18,7 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  *
- * @author Sammy Guergachi <sguergachi at gmail.com>
+ * @danieltistoj Jose Daniel Tistoj Reyes  <sguergachi at gmail.com>
  */
 public class ConexionBD {
 
@@ -60,15 +60,20 @@ public class ConexionBD {
             System.out.println(ex.getMessage());
         }
     }
+//Este metodo es para ver si una consulta devuelve alguna fila, solo se envia como parametro la consulta 
 
     public boolean Existe(String consulta) {
         ResultSetMetaData rsMd;
         boolean existe = false;
+        int contador = 0;
         try {
             sentencia = conexion.createStatement();//Se crea el objeto sentencia que es el encargado de enviar la consulta. 
             resultSet = sentencia.executeQuery(consulta);// se hace la consulta y el resultSet lo guarda. Se debe de usar el Query es solo para consultas "SELECT"
-            rsMd = resultSet.getMetaData();
-            if (rsMd.getColumnCount() != 0) {
+
+            while (resultSet.next()) {//Recorremos las filas de la consulta
+                contador++; //sumamos uno cada vez que se encuentre una fila
+            }
+            if (contador > 0) {//Si se suma uno o mas de una fila, se manda un true
                 existe = true;
             }
         } catch (Exception ex) {
@@ -79,16 +84,18 @@ public class ConexionBD {
     }
     //Este dato busca si un dato existe en una columna determinada
 
-    public boolean Existe(String consulta, String parametro, int columna) {
+    public boolean Existe(String consulta, String parametro, String columna) {
         boolean existe = false;
         String parametroExistente = "";
         try {
             sentencia = conexion.createStatement();//Se crea el objeto sentencia que es el encargado de enviar la consulta. 
             resultSet = sentencia.executeQuery(consulta);// se hace la consulta y el resultSet lo guarda. Se debe de usar el Query es solo para consultas "SELECT"
 
-            if (resultSet.next()) {
-                parametroExistente = resultSet.getString(columna);
-                if (parametroExistente.equals(parametro)) {
+            while (resultSet.next()) {//Se van recorriendo las filas de la consulta con el while 
+
+                parametroExistente = resultSet.getString(columna); //se consulta el dato que tenga esa fila en una columna determinada, y se pasa el resultado a una variable
+
+                if (parametroExistente.equals(parametro)) {//Se evalua que el parametro actual coincide con el que se quiere encontrar 
                     existe = true;
                 }
             }
@@ -145,6 +152,7 @@ public class ConexionBD {
             System.out.println(e.getMessage());
         }
     }
+//Cierra la sesion actual a la base de datos
 
     public void CerrarConexion() {
         try {
@@ -154,14 +162,17 @@ public class ConexionBD {
             System.out.println(e.getMessage());
         }
     }
+//Eenvia el resulSet
 
     public ResultSet getResultSet() {
         return resultSet;
     }
+    //Envia la conexion
 
     public Connection getConexion() {
         return conexion;
     }
+//Envia la sentencia actual
 
     public Statement getSentencia() {
         return sentencia;
